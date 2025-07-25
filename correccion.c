@@ -17,6 +17,7 @@ int calcular_r(int m) {
     return r;
 }
 
+//capa de presentacion
 // para cualquier codigo(n,m) que cumpla (m+r+1)<=2^r
 // m = numero de bits de datos
 // r= numero de bits de pariedad
@@ -108,6 +109,7 @@ uint64_t hamming_ecode_general(uint64_t data, int m){
     return hamming;
 }
 
+//capa de presentacion
 uint64_t hamming_decode_general(uint64_t hamming, int m) {
     int r = calcular_r(m);
     int n = m + r;
@@ -144,7 +146,7 @@ uint64_t hamming_decode_general(uint64_t hamming, int m) {
             printf(" (par) -> S%d=0\n", parity_pos);
         }
     }
-
+    //capa de integridad
     printf("Sindrome: %d\n", syndrome);
 
     if (syndrome == 0) {
@@ -240,6 +242,7 @@ void charToBinary(char c) {
 //emisor: 
 uint64_t emisor(){
 
+    //capa de aplicacion
     //0. ingresar caracter
     char inputChar;
     printf("Ingrese el caracter a : ");
