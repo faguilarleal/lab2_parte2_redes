@@ -243,8 +243,55 @@ void charToBinary(char c) {
     printf("%s\n", binary); 
 }
 
+//canal con ruido
+uint64_t canal_transmision(uint64_t mensaje, int n) {
+
+    char input[10];
+    printf("\nAgregar ruido? (s/n): ");
+    scanf("%s", input);
+    
+    if (input[0] == 's' || input[0] == 'S') {
+        printf("Cuantos errores introducir? (1-3): ");
+        int num_errores;
+        scanf("%d", &num_errores);
+
+        printf("Mensaje original: ");
+        for (int i = 0; i < n; i++) {
+            printf("%d", (int)((mensaje >> i) & 1));
+        }
+        printf("\n");
+        
+        for(int i = 0; i < num_errores; i++) {
+            printf("Ingrese posicion del error %d (1-based): ", i+1);
+            int pos_error;
+            scanf("%d", &pos_error);
+            //introducir error
+            mensaje ^= (1ULL << (pos_error - 1)); 
+            printf("error %d introducido en posicion %d\n", i+1, pos_error);
+        }
+
+
+    printf("Mensaje con ruido: ");
+        for (int i = 0; i < n; i++) {
+            printf("%d", (int)((mensaje >> i) & 1));
+        }
+        printf("\n");
+    } else {
+        printf("Transmision sin errores\n");
+    }
+
+    return mensaje;
+
+}
+
+
+typedef struct {
+    uint64_t mensaje_codificado;
+    int bits_datos;
+} MensajeTransmision;
+
 //emisor: 
-uint64_t emisor(){
+MensajeTransmision emisor(){
 
     //capa de aplicacion
     //0. ingresar caracter
@@ -269,7 +316,8 @@ uint64_t emisor(){
     uint64_t encoded = hamming_ecode_general(data, m);
     //3. devolver el mensaje en binario concatenado con la informacion
     //adicional requerida para la correccion de errores
-    return encoded;
+    MensajeTransmision resultado = {encoded, m};
+    return resultado;
 }
 
 //receptor:
@@ -280,44 +328,22 @@ uint64_t emisor(){
 //b. Se detectaron errores: indicar que la trama se descarta por detectar errores.
 //c. Se detectaron y corrigieron errores: indicar que se corrigieron errores, indicar
 //posicion de los bits que se corrigieron y mostrar la trama corregida
-uint64_t receptor(uint64_t recibido){ //, int m
-
-    char input[10];
-    printf("Agregar ruido? (s/n): ");
-    scanf("%s", input);
-    
-    if (input[0] == 's' || input[0] == 'S') {
-        printf("Cuantos errores introducir? (1-3): ");
-        int num_errores;
-        scanf("%d", &num_errores);
-        
-        for(int i = 0; i < num_errores; i++) {
-            printf("Ingrese posicion del error %d (1-based): ", i+1);
-            int pos_error;
-            scanf("%d", &pos_error);
-            //introducir error
-            recibido ^= (1ULL << (pos_error - 1)); 
-            printf("error %d introducido en posicion %d\n", i+1, pos_error);
-        }
-    }
-    
-    char input_m[10];
-    printf("Ingrese cantidad de bits de datos originales: ");
-    scanf("%s", input_m);
-    int m_receptor = atoi(input_m);
+uint64_t receptor(uint64_t recibido, int m){ //, int m
     printf("\n--- Receptor  ---\n");
-    return hamming_decode_general(recibido, m_receptor);
+    return hamming_decode_general(recibido, m);
 }
 
 
 int main(){
     printf("\n=== Bienvenido a mensajeria 3000 ===\n");
     printf("\n--- Emisor ---\n");
-    uint64_t enviado = emisor();
+    MensajeTransmision mensaje_original = emisor();
 
-    
+    int r = calcular_r(mensaje_original.bits_datos);
+    int n = mensaje_original.bits_datos + r;
+    uint64_t mensaje_transmitido = canal_transmision(mensaje_original.mensaje_codificado, n);
 
-    receptor(enviado);
+    receptor(mensaje_transmitido, mensaje_original.bits_datos);
 
     return 0;
 }
