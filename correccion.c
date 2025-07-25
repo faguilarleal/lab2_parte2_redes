@@ -24,12 +24,12 @@ int calcular_r(int m) {
 // n= m + r, NO +1 (ese era el error principal)
 uint64_t hamming_ecode_general(uint64_t data, int m){
 
-    // Mostrar el numero en binario 
-    printf("Datos originales en binario: ");
-    for (int i = m - 1; i >= 0; i--) {
-        printf("%c", ((data >> i) & 1) ? '1' : '0');
-    }
-    printf("\n");
+    // // Mostrar el numero en binario 
+    // printf("Datos originales en binario: ");
+    // for (int i = m - 1; i >= 0; i--) {
+    //     printf("%c", ((data >> i) & 1) ? '1' : '0');
+    // }
+    // printf("\n");
 
     //determinar bits de pariedad
     int r = calcular_r(m);
@@ -197,6 +197,10 @@ uint64_t hamming_decode_general(uint64_t hamming, int m) {
         printf("%d", (int)((datos >> i) & 1));
     }
     printf("\n");
+    //for (int i = 0; i < m; i++) {
+    //     printf("%d", (int)((datos >> i) & 1));
+    // }
+    // printf("\n");
 
     return datos;
 }
@@ -301,7 +305,7 @@ uint64_t receptor(uint64_t recibido){ //, int m
     printf("Ingrese cantidad de bits de datos originales: ");
     scanf("%s", input_m);
     int m_receptor = atoi(input_m);
-
+    printf("\n--- Receptor  ---\n");
     return hamming_decode_general(recibido, m_receptor);
 }
 
@@ -311,7 +315,7 @@ int main(){
     printf("\n--- Emisor ---\n");
     uint64_t enviado = emisor();
 
-    printf("\n--- Receptor  ---\n");
+    
 
     receptor(enviado);
 
