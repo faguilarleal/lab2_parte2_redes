@@ -293,13 +293,7 @@ typedef struct {
 } MensajeTransmision;
 
 //emisor: 
-MensajeTransmision emisor(){
-
-    //capa de aplicacion
-    //0. ingresar mensaje
-    char cadena[64];
-    printf("Ingrese el mensaje (max 7 caracteres) : ");
-    scanf("%s", cadena);
+MensajeTransmision emisor(char cadena[]){
 
     printf("cadena ingresada: '%s'\n", cadena);
 
@@ -343,8 +337,15 @@ uint64_t receptor(uint64_t recibido, int m){ //, int m
 
 int main(){
     printf("\n=== Bienvenido a mensajeria 3000 ===\n");
+
+    //capa de aplicacion
+    //0. ingresar mensaje
+    char cadena[64];
+    printf("Ingrese el mensaje (max 7 caracteres) : ");
+    scanf("%s", cadena);
+
     printf("\n--- Emisor ---\n");
-    MensajeTransmision mensaje_original = emisor();
+    MensajeTransmision mensaje_original = emisor(cadena);
 
     int r = calcular_r(mensaje_original.bits_datos);
     int n = mensaje_original.bits_datos + r;
