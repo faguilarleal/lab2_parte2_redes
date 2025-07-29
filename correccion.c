@@ -95,8 +95,8 @@ uint64_t hamming_ecode_general(uint64_t data, int m){
     printf("\n");
 
     //mostrar posicion por posicion
-    printf("----Desglose por posiciones:\n----");
-    printf("\n (leer de abajo para arriba) \n");
+    printf("----Desglose por posiciones:----\n");
+    printf("(leer de abajo para arriba) \n");
     for (int i = 1; i <= n; i++) {
         int bit_val = (hamming >> (i-1)) & 1;
         if ((i & (i - 1)) == 0) {
