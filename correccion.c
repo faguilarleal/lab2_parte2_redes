@@ -232,15 +232,17 @@ void validacion(char* codigo, int longitud) {
     }
 }
 
-char binary[9];
 
-void charToBinary(char c) {
-    for(int i = 7; i >= 0; i--) {
-        binary[7-i] = ((c >> i) & 1) ? '1' : '0';
+void stringToBinary(const char* input, char* output) {
+    int k = 0;
+    for (int i = 0; i < strlen(input); i++) {
+        unsigned char c = input[i];
+        for (int j = 7; j >= 0; j--) {
+            output[k++] = (c & (1 << j)) ? '1' : '0';
+        }
     }
-    binary[8] = '\0';
-    
-    printf("%s\n", binary); 
+    output[k] = '\0';  
+    printf("%s\n", output); 
 }
 
 //canal con ruido
@@ -294,21 +296,26 @@ typedef struct {
 MensajeTransmision emisor(){
 
     //capa de aplicacion
-    //0. ingresar caracter
-    char inputChar;
-    printf("Ingrese el caracter a : ");
-    scanf(" %c", &inputChar);
+    //0. ingresar mensaje
+    char cadena[64];
+    printf("Ingrese el mensaje (max 7 caracteres) : ");
+    scanf("%s", cadena);
 
-    printf("Caracter ingresado: '%c'\n", inputChar);
+    printf("cadena ingresada: '%s'\n", cadena);
+
+
     printf("Representacion binaria: ");
-    charToBinary(inputChar);
+    char binario[512];  // 64 * 8 = 512 bits máximo
+    // charToBinary(cadena);
+    stringToBinary(cadena, binario);   
+    
 
-    int m = strlen(binary);
+    int m = strlen(binario);
     printf("Longitud de la información: %d bits\n", m);
 
-    validacion(binary, m);
+    validacion(binario, m);
 
-    uint64_t data = string_to_uint64(binary);
+    uint64_t data = string_to_uint64(binario);
     printf("En decimal: %llu\n", (unsigned long long)data);
 
     //2. ejecutar el algoritmo y obtener la infomacion  
