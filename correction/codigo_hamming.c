@@ -285,7 +285,7 @@ MensajeTransmision emisor(const char* cadena) {
 uint64_t receptor(uint64_t recibido, int m) {
     int hubo_error = 0;
     int pos_error = 0;
-
+    
     printf("\n--- Receptor ---\n");
     uint64_t datos = hamming_decode_general(recibido, m, &hubo_error, &pos_error);
 
