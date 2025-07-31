@@ -1,6 +1,6 @@
 import socket
 import random
-from receptor import run
+from receptor import Receptor
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,6 +10,7 @@ PORT = 1111
 def main():
     global adresses, server
     server.bind((ADRESS, PORT))
+    r = Receptor()
 
     sent = False 
     while True:
@@ -20,7 +21,7 @@ def main():
         print("Recieved message: ", message)
         print("Recieved checksum: ", mssg_chsm)
 
-        run(message, mssg_chsm)
+        r.run(message, mssg_chsm)
 
 
 

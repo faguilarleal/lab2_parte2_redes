@@ -1,33 +1,35 @@
-def fletcher_checksum(data, block_size):
-    sum1 = 0
-    sum2 = 0
-    for byte in data:
-        sum1 = (sum1 + byte) % 255
-        sum2 = (sum2 + sum1) % 255
-    return [sum1, sum2]
+class Receptor:
+    def __init__(self):
+        self.block_size = 8  # Se fija en 8 bits
 
-def binary_string_to_bytes(binary_str, block_size):
-    return [int(binary_str[i:i+block_size], 2) for i in range(0, len(binary_str), block_size)]
+    def fletcher_checksum(self, data):
+        sum1 = 0
+        sum2 = 0
+        for byte in data:
+            sum1 = (sum1 + byte) % 255
+            sum2 = (sum2 + sum1) % 255
+        return [sum1, sum2]
 
-def decode_from_binary(binary_message):
-    ascii_message = ''.join(chr(int(binary_message[i:i+8], 2)) for i in range(0, len(binary_message), 8))
-    return ascii_message
+    def binary_string_to_bytes(self, binary_str):
+        return [int(binary_str[i:i + self.block_size], 2) for i in range(0, len(binary_str), self.block_size)]
 
-def run(original_message, binary_message_with_checksum ):
-    block_size = 8
-    if len(binary_message_with_checksum) % 16 == 0: block_size = 16
-    if len(binary_message_with_checksum) % 32 == 0: block_size = 32
+    def decode_from_binary(self, binary_message):
+        return ''.join(chr(int(binary_message[i:i + 8], 2)) for i in range(0, len(binary_message), 8))
 
-    data = binary_string_to_bytes(binary_message_with_checksum[:-2*block_size], block_size)
-    received_checksum = binary_string_to_bytes(binary_message_with_checksum[-2*block_size:], block_size)
+    def run(self, original_message, binary_message_with_checksum):
+        # Forzar block_size fijo de 8
+        self.block_size = 8
 
-    calculated_checksum = fletcher_checksum(data, block_size)
+        data_part = binary_message_with_checksum[:-2 * self.block_size]
+        checksum_part = binary_message_with_checksum[-2 * self.block_size:]
 
-    if calculated_checksum == received_checksum:
-        print("No se detectaron errores. Mensaje original:", original_message)
-        print("Mensaje decodificado:", decode_from_binary(original_message))
+        data = self.binary_string_to_bytes(data_part)
+        received_checksum = self.binary_string_to_bytes(checksum_part)
 
-    else:
-        print("Se detectaron errores en el mensaje. Mensaje descartado.")
+        calculated_checksum = self.fletcher_checksum(data)
 
-    
+        if calculated_checksum == received_checksum:
+            print("No se detectaron errores. Mensaje original:", original_message)
+            print(" Mensaje decodificado:", self.decode_from_binary(original_message))
+        else:
+            print(" Se detectaron errores en el mensaje. Mensaje descartado.")

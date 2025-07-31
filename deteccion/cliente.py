@@ -42,8 +42,7 @@ class Client:
 
         return 0
 
-# Para pruebas directas
 if __name__ == "__main__":
-    client = Client("127.0.0.1")  # Cambia la IP si el server está en otro host
+    client = Client("127.0.0.1")  
     msg = input("Ingrese mensaje para enviar: ")
     client.send(msg)
