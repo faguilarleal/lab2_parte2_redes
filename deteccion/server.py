@@ -21,7 +21,7 @@ def main():
         print("Recieved message: ", message)
         print("Recieved checksum: ", mssg_chsm)
 
-        r.run(message, mssg_chsm)
+        r.run(message)
 
 
 

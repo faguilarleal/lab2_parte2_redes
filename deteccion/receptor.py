@@ -1,6 +1,6 @@
 class Receptor:
     def __init__(self):
-        self.block_size = 8  # Se fija en 8 bits
+        self.block_size = 8  # fijo en 8 bits
 
     def fletcher_checksum(self, data):
         sum1 = 0
@@ -13,23 +13,25 @@ class Receptor:
     def binary_string_to_bytes(self, binary_str):
         return [int(binary_str[i:i + self.block_size], 2) for i in range(0, len(binary_str), self.block_size)]
 
-    def decode_from_binary(self, binary_message):
-        return ''.join(chr(int(binary_message[i:i + 8], 2)) for i in range(0, len(binary_message), 8))
+    def bytes_to_binary_string(self, byte_list):
+        return ''.join(format(b, '08b') for b in byte_list)
 
-    def run(self, original_message, binary_message_with_checksum):
-        # Forzar block_size fijo de 8
-        self.block_size = 8
+    def run(self, full_message):
+        # Divide el mensaje completo en bloques de 8
+        all_bytes = self.binary_string_to_bytes(full_message)
 
-        data_part = binary_message_with_checksum[:-2 * self.block_size]
-        checksum_part = binary_message_with_checksum[-2 * self.block_size:]
+        # Extrae el checksum recibido (últimos dos bloques)
+        received_checksum = all_bytes[-2:]
+        data_bytes = all_bytes[:-2]
 
-        data = self.binary_string_to_bytes(data_part)
-        received_checksum = self.binary_string_to_bytes(checksum_part)
+        # Calcula el checksum sobre los datos
+        calculated_checksum = self.fletcher_checksum(data_bytes)
 
-        calculated_checksum = self.fletcher_checksum(data)
+        print("Mensaje recibido:", self.bytes_to_binary_string(data_bytes))
+        print("Checksum recibido:", self.bytes_to_binary_string(received_checksum))
+        print("Checksum calculado:", self.bytes_to_binary_string(calculated_checksum))
 
-        if calculated_checksum == received_checksum:
-            print("No se detectaron errores. Mensaje original:", original_message)
-            print(" Mensaje decodificado:", self.decode_from_binary(original_message))
+        if received_checksum == calculated_checksum:
+            print(" El mensaje está correcto.")
         else:
-            print(" Se detectaron errores en el mensaje. Mensaje descartado.")
+            print(" Se detectaron errores en el mensaje.")

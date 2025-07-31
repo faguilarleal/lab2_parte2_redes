@@ -30,7 +30,7 @@ class Client:
 
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            payload = self.sender.build_payload(message)
+            payload = self.sender.run(message)
             send_buffer = payload.encode()
             sock.sendto(send_buffer, (self.address, self.PORT))
             print("Mensaje enviado:", payload)
