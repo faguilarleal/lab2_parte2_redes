@@ -1,5 +1,5 @@
 import socket
-from crc32 import emitir_crc32, añadir_ruido
+from crc32 import emitir_crc32, añadir_ruido, verificar_crc32
 
 class Client:
     def __init__(self, address):
@@ -24,12 +24,14 @@ class Client:
 
         return received_data
 
-    def send(self, message):
+    def send(self, message, ruido):
         sock = None
 
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             payload = emitir_crc32(message)
+            if ruido == 1: 
+                payload = añadir_ruido(payload, cantidad_bits=3)
             send_buffer = payload.encode()
             sock.sendto(send_buffer, (self.address, self.PORT))
             print("Mensaje enviado:", payload)
@@ -46,6 +48,6 @@ if __name__ == "__main__":
     msg = input("Ingrese mensaje para enviar: ")
     ruido = input("Ingrese cantidad de bits para agregar ruido, 0 si no: ")
     if ruido == "1":
-        client.send(añadir_ruido(msg))
+        client.send(msg,1)
     else:
-        client.send(msg)
+        client.send(msg,0)

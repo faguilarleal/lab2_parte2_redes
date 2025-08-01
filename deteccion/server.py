@@ -16,7 +16,6 @@ class Server:
                 mensaje_bin = data.decode()
 
                 print(f"Mensaje recibido: {mensaje_bin}")
-
                 if verificar_crc32(mensaje_bin):
                     print("Verificación CRC32: Mensaje correcto.\n")
                     print("Mensaje decodificado: ", decodificar_crc(mensaje_bin))
