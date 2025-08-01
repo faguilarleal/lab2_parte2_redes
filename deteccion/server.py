@@ -1,48 +1,33 @@
 import socket
-import random
-from receptor import Receptor
+from crc32 import verificar_crc32, decodificar_crc
 
+class Server:
+    def __init__(self, port=1111):
+        self.port = port
 
-server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-ADRESS = '127.0.0.1'
-PORT = 1111
+    def start(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('', self.port))
+        print(f"Esperando mensaje...\n")
 
-def main():
-    global adresses, server
-    server.bind((ADRESS, PORT))
-    r = Receptor()
+        try:
+            while True:
+                data, addr = sock.recvfrom(1024)
+                mensaje_bin = data.decode()
 
-    sent = False 
-    while True:
-        print("Waiting for message")
-        data, addr = server.recvfrom(1024)
-        data = data.decode()
-        message, mssg_chsm = clean_message(data)
-        print("Recieved message: ", message)
-        print("Recieved checksum: ", mssg_chsm)
+                print(f"Mensaje recibido: {mensaje_bin}")
 
-        r.run(message)
+                if verificar_crc32(mensaje_bin):
+                    print("Verificación CRC32: Mensaje correcto.\n")
+                    print("Mensaje decodificado: ", decodificar_crc(mensaje_bin))
+                else:
+                    print("Verificación CRC32: Error detectado en la transmisión.\n")
 
-
-
-def format_inforcer(message: list, identifier: int)-> list:
-    formated_str = ""
-
-    formated_str += str(identifier) + ";"
-
-    for i in message:
-        formated_str += str(i) + ","
-    formated_str = formated_str[:-1]
-
-    return formated_str
-
-
-def clean_message(user_message: str)-> list:
-    message, message_chsum = user_message.split(";")
-    return message, message_chsum
-    
-    
-
+        except KeyboardInterrupt:
+            print("\nServidor detenido manualmente.")
+        finally:
+            sock.close()
 
 if __name__ == "__main__":
-    main()
+    server = Server()
+    server.start()
