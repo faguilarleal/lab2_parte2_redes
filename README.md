@@ -16,11 +16,11 @@ gcc cliente.c codigo_hamming.c -o cliente
 ```
 Luego:
 ```
-./servidor.c
+./servidor
 ```
 Y por ultimo: 
 ```
-./cliente.c
+./cliente
 ```
 
 Archivos: 
